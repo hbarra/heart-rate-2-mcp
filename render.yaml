@@ -1,11 +1,9 @@
-# render.yaml - Deploy to Render
 services:
   - type: web
-    name: heart-rate-2-mcp
+    name: hr2mcp
     runtime: node
-    buildCommand: cd server && npm install && npm run build
-    startCommand: cd server && npm start
-    envVars:
-      - key: NODE_ENV
-        value: production
+    plan: free
+    rootDir: server
+    buildCommand: npm install && npm run build
+    startCommand: npm start
     healthCheckPath: /health
