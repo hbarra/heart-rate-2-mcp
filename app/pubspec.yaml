@@ -1,0 +1,35 @@
+name: heart_rate_2_mcp
+description: Stream heart rate from BLE chest straps to MCP
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # BLE
+  flutter_blue_plus: ^1.31.0
+  permission_handler: ^11.1.0
+  
+  # State & Storage
+  shared_preferences: ^2.2.2
+  provider: ^6.1.1
+  
+  # HTTP
+  http: ^1.1.0
+  
+  # Utils
+  uuid: ^4.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
