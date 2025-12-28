@@ -14,7 +14,7 @@ app.use(cors({
 }));
 
 // Serve static files from public folder
-app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static(path.join(process.cwd(), 'public')));
 
 // Health check
 app.get('/health', (req, res) => {
