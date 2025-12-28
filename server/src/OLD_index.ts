@@ -1,6 +1,5 @@
 import express from 'express';
 import cors from 'cors';
-import path from 'path';
 import { apiRouter } from './api';
 import { handleMcpRequest } from './mcp';
 
@@ -12,9 +11,6 @@ app.use(cors({
   origin: '*',
   exposedHeaders: ['Mcp-Session-Id']
 }));
-
-// Serve static files from public folder
-app.use(express.static(path.join(__dirname, '../public')));
 
 // Health check
 app.get('/health', (req, res) => {
@@ -31,7 +27,6 @@ app.post('/mcp', handleMcpRequest);
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Heart Rate 2 MCP server running on port ${PORT}`);
-  console.log(`- Website: http://localhost:${PORT}/`);
   console.log(`- REST API: http://localhost:${PORT}/api/hr`);
   console.log(`- MCP endpoint: http://localhost:${PORT}/mcp`);
 });

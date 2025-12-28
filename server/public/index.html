@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HR2MCP - Connect Your Heart Rate to AI</title>
+  <meta name="description" content="Stream real-time heart rate data from any Bluetooth chest strap to AI agents via MCP (Model Context Protocol).">
+  <link rel="icon" type="image/png" href="/icon.png">
+  <link rel="apple-touch-icon" href="/icon.png">
+  <meta property="og:title" content="HR2MCP - Connect Your Heart Rate to AI">
+  <meta property="og:description" content="Stream real-time heart rate data from any Bluetooth chest strap to AI agents via MCP.">
+  <meta property="og:image" content="/icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #ffffff;
+      --bg-secondary: #f9fafb;
+      --bg-tertiary: #f3f4f6;
+      --text: #111827;
+      --text-secondary: #6b7280;
+      --accent: #dc2626;
+      --accent-glow: rgba(220, 38, 38, 0.1);
+      --border: #e5e7eb;
+      --code-bg: #1f2937;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      z-index: 100;
+    }
+
+    nav .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 64px;
+    }
+
+    .logo {
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: var(--text);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+    }
+
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+    }
+
+    /* Hero */
+    .hero {
+      padding: 160px 0 100px;
+      text-align: center;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      padding: 6px 14px;
+      border-radius: 100px;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+
+    .hero p {
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto 40px;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 1rem;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #dc2626;
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: var(--bg-secondary);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-tertiary);
+      border-color: var(--text-secondary);
+    }
+
+    /* Sections */
+    section {
+      padding: 80px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    section h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      letter-spacing: -0.01em;
+    }
+
+    section > .container > p {
+      color: var(--text-secondary);
+      margin-bottom: 40px;
+      font-size: 1.1rem;
+    }
+
+    /* App Section */
+    .platforms {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    .platform-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+    }
+
+    .platform-card h3 {
+      font-size: 1.25rem;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .platform-card p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      margin-bottom: 20px;
+    }
+
+    .platform-card .btn {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .coming-soon {
+      background: var(--bg-tertiary);
+      color: var(--text-secondary);
+      cursor: not-allowed;
+    }
+
+    .compatibility {
+      margin-top: 32px;
+      padding: 20px;
+      background: var(--bg-secondary);
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .compatibility p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .compat-logos {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-top: 12px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    /* Setup Section */
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .step {
+      display: flex;
+      gap: 24px;
+    }
+
+    .step-number {
+      flex-shrink: 0;
+      width: 48px;
+      height: 48px;
+      background: var(--accent-glow);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: var(--accent);
+    }
+
+    .step-content h3 {
+      font-size: 1.25rem;
+      margin-bottom: 8px;
+    }
+
+    .step-content p {
+      color: var(--text-secondary);
+    }
+
+    .step-content ul {
+      color: var(--text-secondary);
+      margin-top: 8px;
+      padding-left: 20px;
+    }
+
+    .step-content li {
+      margin-bottom: 4px;
+    }
+
+    .endpoint-box {
+      margin-top: 40px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    .endpoint-box h4 {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+    }
+
+    .endpoint-url {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.1rem;
+      color: #e5e7eb;
+      background: var(--code-bg);
+      padding: 16px 20px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .endpoint-url span {
+      color: #f87171;
+    }
+
+    .copy-btn {
+      background: #374151;
+      border: 1px solid #4b5563;
+      color: #e5e7eb;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .copy-btn:hover {
+      background: #4b5563;
+      color: #ffffff;
+    }
+
+    /* Developer Section */
+    .tools-grid {
+      display: grid;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .tool-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+    }
+
+    .tool-card h4 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1rem;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    .tool-card p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .code-block {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      overflow-x: auto;
+      margin-bottom: 24px;
+      color: #e5e7eb;
+    }
+
+    .code-block pre {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .code-block .comment {
+      color: #6a737d;
+    }
+
+    .code-block .string {
+      color: #a5d6ff;
+    }
+
+    .code-block .key {
+      color: #7ee787;
+    }
+
+    .code-block .label {
+      font-size: 0.75rem;
+      color: #9ca3af;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    /* Footer */
+    footer {
+      padding: 40px 0;
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+
+    footer p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    footer a {
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Mobile */
+    @media (max-width: 640px) {
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+
+      .hero p {
+        font-size: 1.1rem;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .step {
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .endpoint-url {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="container">
+      <a href="#" class="logo">
+        <img src="/icon.png" alt="HR2MCP" class="logo-icon">
+        HR2MCP
+      </a>
+      <div class="nav-links">
+        <a href="#app">Get the App</a>
+        <a href="#setup">Setup</a>
+        <a href="#developers">Developers</a>
+        <a href="https://github.com/hbarra/heart-rate-2-mcp" target="_blank">GitHub</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="container">
+      <div class="hero-badge">
+        Real-time streaming
+      </div>
+      <h1>Connect your heart rate to AI</h1>
+      <p>Stream real-time heart rate data from any Bluetooth chest strap to AI agents via MCP (Model Context Protocol).</p>
+      <div class="hero-buttons">
+        <a href="#app" class="btn btn-primary">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          Get the App
+        </a>
+        <a href="#developers" class="btn btn-secondary">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="16 18 22 12 16 6"></polyline>
+            <polyline points="8 6 2 12 8 18"></polyline>
+          </svg>
+          View API Docs
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section id="app">
+    <div class="container">
+      <h2>Get the App</h2>
+      <p>Download for iOS or Android to start streaming your heart rate data.</p>
+      
+      <div class="platforms">
+        <div class="platform-card">
+          <h3>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+            </svg>
+            iOS
+          </h3>
+          <p>Requires iOS 15 or later. Install via TestFlight for beta access.</p>
+          <a href="#" class="btn coming-soon">Coming Soon</a>
+        </div>
+        
+        <div class="platform-card">
+          <h3>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M17.523 15.341l1.424-2.471c.091-.158.055-.359-.084-.461-.139-.101-.342-.071-.464.07l-1.442 2.502c-1.094-.501-2.32-.778-3.623-.778-1.303 0-2.529.277-3.623.778l-1.442-2.502c-.122-.141-.325-.171-.464-.07-.139.102-.175.303-.084.461l1.424 2.471c-2.297 1.283-3.857 3.673-4.117 6.464h16.612c-.26-2.791-1.82-5.181-4.117-6.464zm-7.453 3.861c-.449 0-.812-.364-.812-.812 0-.449.363-.812.812-.812.448 0 .812.363.812.812 0 .448-.364.812-.812.812zm6.86 0c-.449 0-.812-.364-.812-.812 0-.449.363-.812.812-.812.448 0 .812.363.812.812 0 .448-.364.812-.812.812zM3.428 10.895l1.424-2.471c.091-.158.055-.359-.084-.461-.139-.101-.342-.071-.464.07l-1.442 2.502C.565 9.252-.995 6.862-.735 4.071h16.612"/>
+            </svg>
+            Android
+          </h3>
+          <p>Requires Android 8.0 or later. Direct APK download available.</p>
+          <a href="#" class="btn coming-soon">Coming Soon</a>
+        </div>
+      </div>
+
+      <div class="compatibility">
+        <p>Works with popular Bluetooth heart rate monitors</p>
+        <div class="compat-logos">
+          <span>Polar</span>
+          <span>Garmin</span>
+          <span>Wahoo</span>
+          <span>Coospo</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="setup">
+    <div class="container">
+      <h2>Setup Guide</h2>
+      <p>Get streaming in under 5 minutes.</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h3>Install & Configure</h3>
+            <p>Download the app and set your heart rate zones. You can use defaults based on your age or customize them.</p>
+            <ul>
+              <li>Tap "Generate Code" to get your unique pairing code</li>
+              <li>This code connects your data to AI agents</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h3>Connect Your Chest Strap</h3>
+            <p>Put on your Bluetooth chest strap and wet the sensors for better contact.</p>
+            <ul>
+              <li>Tap "Scan for Devices" in the app</li>
+              <li>Select your device from the list</li>
+              <li>Heart rate appears on screen when connected</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h3>Connect to Your AI</h3>
+            <p>Add the MCP server to your AI platform (Claude, Vermillion, etc.) and share your pairing code.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="endpoint-box">
+        <h4>MCP Server Endpoint</h4>
+        <div class="endpoint-url">
+          <span>https://hr2mcp.com/mcp</span>
+          <button class="copy-btn" onclick="navigator.clipboard.writeText('https://hr2mcp.com/mcp'); this.textContent='Copied!'; setTimeout(() => this.textContent='Copy', 2000)">Copy</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="developers">
+    <div class="container">
+      <h2>For Developers</h2>
+      <p>Integrate heart rate data into your AI agents and applications.</p>
+
+      <h3 style="font-size: 1.1rem; margin-bottom: 16px; color: var(--text-secondary);">Available MCP Tools</h3>
+      <div class="tools-grid">
+        <div class="tool-card">
+          <h4>getCurrentHeartRate</h4>
+          <p>Get the latest heart rate reading with BPM, zone, and timestamp.</p>
+        </div>
+        <div class="tool-card">
+          <h4>getHeartRateHistory</h4>
+          <p>Get all readings from the last N seconds (1-1800).</p>
+        </div>
+        <div class="tool-card">
+          <h4>getHeartRateStats</h4>
+          <p>Get statistics: average, min, max, and time in each zone.</p>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <span class="label">Example MCP Request</span>
+<pre>{
+  <span class="key">"jsonrpc"</span>: <span class="string">"2.0"</span>,
+  <span class="key">"id"</span>: 1,
+  <span class="key">"method"</span>: <span class="string">"tools/call"</span>,
+  <span class="key">"params"</span>: {
+    <span class="key">"name"</span>: <span class="string">"getCurrentHeartRate"</span>,
+    <span class="key">"arguments"</span>: { <span class="key">"pairingCode"</span>: <span class="string">"condor34"</span> }
+  }
+}</pre>
+      </div>
+
+      <div class="code-block">
+        <span class="label">REST API Alternative</span>
+<pre><span class="comment"># Get current heart rate</span>
+GET https://hr2mcp.com/api/hr/current?code={pairingCode}
+
+<span class="comment"># Get history</span>
+GET https://hr2mcp.com/api/hr/history?code={pairingCode}&seconds=300
+
+<span class="comment"># Get stats</span>
+GET https://hr2mcp.com/api/hr/stats?code={pairingCode}&seconds=300</pre>
+      </div>
+
+      <a href="https://github.com/hbarra/heart-rate-2-mcp" target="_blank" class="btn btn-secondary">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+        </svg>
+        View Source on GitHub
+      </a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>Built by <a href="https://github.com/hbarra">Hugo Barra</a> · <a href="https://github.com/hbarra/heart-rate-2-mcp">Source Code</a></p>
+    </div>
+  </footer>
+</body>
+</html>
