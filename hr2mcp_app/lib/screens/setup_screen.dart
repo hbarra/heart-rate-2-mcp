@@ -68,7 +68,7 @@ class _SetupScreenState extends State<SetupScreen> {
         ),
         const SizedBox(height: 24),
         const Text(
-          'Welcome to\nHeart Rate 2 MCP',
+          'Welcome to\nHR2MCP',
           style: TextStyle(
             fontSize: 32,
             fontWeight: FontWeight.bold,

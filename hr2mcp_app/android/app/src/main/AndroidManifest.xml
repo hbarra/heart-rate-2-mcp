@@ -1,23 +1,29 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    
+
     <!-- Bluetooth permissions -->
     <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30"/>
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30"/>
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN" android:usesPermissionFlags="neverForLocation"/>
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
-    
+
     <!-- Location for BLE scanning (required on older Android versions) -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    
+
     <!-- Internet for API calls -->
     <uses-permission android:name="android.permission.INTERNET"/>
-    
+
+    <!-- Background operation permissions -->
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE"/>
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
+
     <!-- Declare BLE feature as required -->
     <uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/>
-    
+
     <application
-        android:label="Heart Rate 2 MCP"
+        android:label="HR2MCP"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

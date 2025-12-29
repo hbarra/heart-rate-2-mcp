@@ -16,7 +16,7 @@ class HeartRate2McpApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Heart Rate 2 MCP',
+      title: 'HR2MCP',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(

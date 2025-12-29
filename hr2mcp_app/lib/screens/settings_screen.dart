@@ -4,6 +4,30 @@ import '../services/api_service.dart';
 import '../services/zone_service.dart';
 import '../models/heart_rate_zone.dart';
 
+// Design System Constants (shared with home_screen.dart)
+class _AppStyles {
+  static const double borderRadius = 12.0;
+  static const double cardRadius = 16.0;
+  static const double buttonHeight = 48.0;
+  static const double spacing = 16.0;
+  static const double spacingSmall = 12.0;
+  static const double spacingLarge = 24.0;
+
+  static final buttonShape = RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(borderRadius),
+  );
+
+  static final cardShape = RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(cardRadius),
+  );
+
+  static final inputDecoration = InputDecoration(
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(borderRadius),
+    ),
+  );
+}
+
 class SettingsScreen extends StatefulWidget {
   final ApiService apiService;
   final ZoneService zoneService;
@@ -177,16 +201,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : ListView(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(_AppStyles.spacing),
               children: [
                 // Zone Configuration Section
                 _buildSectionHeader('Heart Rate Zones'),
                 const SizedBox(height: 8),
-                
+
                 // Toggle between age-based and manual
                 Card(
+                  shape: _AppStyles.cardShape,
                   child: Padding(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(_AppStyles.spacing),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -212,8 +237,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 16),
-                        
+                        const SizedBox(height: _AppStyles.spacing),
+
                         if (_useAgeBased) ...[
                           // Age input
                           Row(
@@ -221,22 +246,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               Expanded(
                                 child: TextField(
                                   controller: _ageController,
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                     labelText: 'Your Age',
-                                    border: OutlineInputBorder(),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(_AppStyles.borderRadius),
+                                    ),
                                   ),
                                   keyboardType: TextInputType.number,
                                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                 ),
                               ),
-                              const SizedBox(width: 12),
+                              const SizedBox(width: _AppStyles.spacingSmall),
                               ElevatedButton(
                                 onPressed: _saveAge,
+                                style: ElevatedButton.styleFrom(
+                                  minimumSize: const Size(0, _AppStyles.buttonHeight),
+                                  shape: _AppStyles.buttonShape,
+                                ),
                                 child: const Text('Calculate'),
                               ),
                             ],
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: _AppStyles.spacingSmall),
                           Text(
                             'Max HR = 220 - age. Zones calculated as % of max.',
                             style: TextStyle(fontSize: 12, color: Colors.grey[600]),
@@ -252,9 +283,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             'Zone 5: everything above Zone 4 max',
                             style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: _AppStyles.spacingSmall),
                           ElevatedButton(
                             onPressed: _saveManualZones,
+                            style: ElevatedButton.styleFrom(
+                              minimumSize: const Size(0, _AppStyles.buttonHeight),
+                              shape: _AppStyles.buttonShape,
+                            ),
                             child: const Text('Save Manual Zones'),
                           ),
                         ],
@@ -262,16 +297,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   ),
                 ),
-                
-                const SizedBox(height: 24),
-                
+
+                const SizedBox(height: _AppStyles.spacingLarge),
+
                 // Pairing Code Section
                 _buildSectionHeader('Pairing Code'),
                 const SizedBox(height: 8),
-                
+
                 Card(
+                  shape: _AppStyles.cardShape,
                   child: Padding(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(_AppStyles.spacing),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -300,61 +336,73 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: _AppStyles.spacingSmall),
                         Text(
                           'Share this code with your Dreamer agent',
                           style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: _AppStyles.spacingSmall),
                         OutlinedButton(
                           onPressed: _regeneratePairingCode,
+                          style: OutlinedButton.styleFrom(
+                            minimumSize: const Size(0, _AppStyles.buttonHeight),
+                            shape: _AppStyles.buttonShape,
+                          ),
                           child: const Text('Regenerate Code'),
                         ),
                       ],
                     ),
                   ),
                 ),
-                
-                const SizedBox(height: 24),
-                
+
+                const SizedBox(height: _AppStyles.spacingLarge),
+
                 // Server Configuration Section
                 _buildSectionHeader('Server'),
                 const SizedBox(height: 8),
-                
+
                 Card(
+                  shape: _AppStyles.cardShape,
                   child: Padding(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(_AppStyles.spacing),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         TextField(
                           controller: _serverUrlController,
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             labelText: 'Server URL',
-                            border: OutlineInputBorder(),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(_AppStyles.borderRadius),
+                            ),
                             hintText: 'https://hr2mcp.onrender.com',
                           ),
                           keyboardType: TextInputType.url,
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: _AppStyles.spacingSmall),
                         ElevatedButton(
                           onPressed: _testConnection,
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: const Size(0, _AppStyles.buttonHeight),
+                            shape: _AppStyles.buttonShape,
+                          ),
                           child: const Text('Test Connection'),
                         ),
                       ],
                     ),
                   ),
                 ),
-                
-                const SizedBox(height: 24),
-                
+
+                const SizedBox(height: _AppStyles.spacingLarge),
+
                 // Zone Reference
                 _buildSectionHeader('Zone Reference'),
                 const SizedBox(height: 8),
-                
+
                 Card(
+                  shape: _AppStyles.cardShape,
                   child: Padding(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(_AppStyles.spacing),
                     child: Column(
                       children: [
                         _buildZoneRow(1, 'Recovery', Colors.grey, widget.zoneService.zones),
@@ -383,7 +431,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   
   Widget _buildZoneInput(String label, TextEditingController controller, Color color) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: _AppStyles.spacingSmall),
       child: Row(
         children: [
           Container(
@@ -394,13 +442,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
               shape: BoxShape.circle,
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: _AppStyles.spacingSmall),
           Expanded(
             child: TextField(
               controller: controller,
               decoration: InputDecoration(
                 labelText: label,
-                border: const OutlineInputBorder(),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(_AppStyles.borderRadius),
+                ),
                 isDense: true,
               ),
               keyboardType: TextInputType.number,
@@ -414,15 +464,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
   
   Widget _buildZoneRow(int zone, String name, Color color, HeartRateZones zones) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
         children: [
           Container(
-            width: 24,
-            height: 24,
+            width: 28,
+            height: 28,
             decoration: BoxDecoration(
               color: color,
-              borderRadius: BorderRadius.circular(4),
+              borderRadius: BorderRadius.circular(6),
             ),
             child: Center(
               child: Text(
@@ -434,11 +484,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
           ),
-          const SizedBox(width: 12),
-          Expanded(child: Text(name)),
+          const SizedBox(width: _AppStyles.spacingSmall),
+          Expanded(
+            child: Text(
+              name,
+              style: const TextStyle(fontWeight: FontWeight.w500),
+            ),
+          ),
           Text(
             zones.getZoneRange(zone),
-            style: const TextStyle(fontFamily: 'monospace'),
+            style: TextStyle(
+              fontFamily: 'monospace',
+              color: Colors.grey[600],
+            ),
           ),
         ],
       ),

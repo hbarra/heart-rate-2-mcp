@@ -32,19 +32,20 @@ class HeartRateService {
   Stream<List<ScanResult>> get scanResultsStream => _scanResultsController.stream;
   
   BluetoothDevice? _connectedDevice;
+  BluetoothDevice? _lastConnectedDevice; // For reconnection
   StreamSubscription? _hrSubscription;
   StreamSubscription? _connectionSubscription;
   StreamSubscription? _scanSubscription;
-  
+
   HRConnectionState _connectionState = HRConnectionState.disconnected;
   HRConnectionState get connectionState => _connectionState;
-  
+
   String? get connectedDeviceName => _connectedDevice?.platformName;
-  
+
   // Test mode for development without a chest strap
   bool _testMode = false;
   Timer? _testTimer;
-  
+
   bool get isTestMode => _testMode;
   
   void _updateConnectionState(HRConnectionState state) {
@@ -56,9 +57,22 @@ class HeartRateService {
   Future<bool> isBluetoothAvailable() async {
     final isSupported = await FlutterBluePlus.isSupported;
     if (!isSupported) return false;
-    
-    final state = await FlutterBluePlus.adapterState.first;
-    return state == BluetoothAdapterState.on;
+
+    // On iOS, the first state is often 'unknown' before transitioning to 'on'
+    // Wait for a definitive state (not unknown) with a timeout
+    try {
+      final state = await FlutterBluePlus.adapterState
+          .where((s) => s != BluetoothAdapterState.unknown)
+          .first
+          .timeout(const Duration(seconds: 2));
+      return state == BluetoothAdapterState.on;
+    } catch (e) {
+      // Timeout - check current state directly
+      final currentState = await FlutterBluePlus.adapterState.first;
+      // If still unknown after timeout, assume it's on (iOS quirk)
+      return currentState == BluetoothAdapterState.on ||
+          currentState == BluetoothAdapterState.unknown;
+    }
   }
   
   /// Start scanning for heart rate monitors
@@ -156,14 +170,24 @@ class HeartRateService {
       });
       
       _connectedDevice = device;
+      _lastConnectedDevice = device; // Remember for reconnection
       _updateConnectionState(HRConnectionState.connected);
       return true;
-      
+
     } catch (e) {
       print('Error connecting: $e');
       await disconnect();
       return false;
     }
+  }
+
+  /// Try to reconnect to the last connected device
+  Future<bool> tryReconnect() async {
+    if (_lastConnectedDevice == null) return false;
+    if (_connectionState != HRConnectionState.disconnected) return false;
+
+    print('Attempting to reconnect to ${_lastConnectedDevice!.platformName}');
+    return await connect(_lastConnectedDevice!);
   }
   
   /// Parse heart rate from BLE characteristic value

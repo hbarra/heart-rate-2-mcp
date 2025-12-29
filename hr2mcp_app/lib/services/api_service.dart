@@ -63,7 +63,7 @@ class ApiService {
   /// Send heart rate reading to server
   Future<bool> sendHeartRate(int bpm, int zone) async {
     if (_serverUrl == null || _pairingCode == null) return false;
-    
+
     try {
       final response = await http.post(
         Uri.parse('$_serverUrl/api/hr'),
@@ -74,10 +74,10 @@ class ApiService {
           'zone': zone,
         }),
       ).timeout(const Duration(seconds: 5));
-      
+
       return response.statusCode == 200;
     } catch (e) {
-      print('Error sending heart rate: $e');
+      // Silent failure - don't spam logs
       return false;
     }
   }
