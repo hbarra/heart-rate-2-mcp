@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
-const path_1 = __importDefault(require("path"));
 const api_1 = require("./api");
 const mcp_1 = require("./mcp");
 const app = (0, express_1.default)();
@@ -15,8 +14,6 @@ app.use((0, cors_1.default)({
     origin: '*',
     exposedHeaders: ['Mcp-Session-Id']
 }));
-// Serve static files from public folder
-app.use(express_1.default.static(path_1.default.join(process.cwd(), 'public')));
 // Health check
 app.get('/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
@@ -29,7 +26,6 @@ app.post('/mcp', mcp_1.handleMcpRequest);
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
     console.log(`Heart Rate 2 MCP server running on port ${PORT}`);
-    console.log(`- Website: http://localhost:${PORT}/`);
     console.log(`- REST API: http://localhost:${PORT}/api/hr`);
     console.log(`- MCP endpoint: http://localhost:${PORT}/mcp`);
 });
